@@ -32,17 +32,19 @@ def get_restaurants():
 @app.post('/api/restaurant')
 def create_restaurant():
     request_payload = request.get_json()
-    query = 'INSERT INTO restaurant (email, name, address, phone_number, bio, password, city, banner_url, profile_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    query = 'INSERT INTO restaurant ( name, email, password, address, city, bio, phone_number, banner_url, profile_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
 
     name = request_payload.get('name')
-    address = request_payload.get('address')
-    banner_url = request_payload.get('bannerUrl') or 'https://images.pexels.com/photos/566566/pexels-photo-566566.jpeg'
-    profile_url = request_payload.get('profileUrl') or 'https://images.pexels.com/photos/3522790/pexels-photo-3522790.jpeg'
-    bio = request_payload.get('bio')
-    city = request_payload.get('city')
     email = request_payload.get('email')
-    phone_number = request_payload.get('phoneNum')
     password = request_payload.get('password')
+    address = request_payload.get('address')
+    city = request_payload.get('city')
+    bio = request_payload.get('bio')
+    phone_number = request_payload.get('phoneNum')
+    profile_url = request_payload.get('profileUrl') or 'https://images.pexels.com/photos/3522790/pexels-photo-3522790.jpeg'
+    banner_url = request_payload.get('bannerUrl') or 'https://images.pexels.com/photos/566566/pexels-photo-566566.jpeg'
+    
+
 
 
     result = run_query(query, (email, name, address, phone_number, bio, password, city, banner_url, profile_url))
@@ -51,10 +53,11 @@ def create_restaurant():
 
 
 
-@app.patch('/api/restaurant')
+""" @app.patch('/api/restaurant')
 def update_restaurant():
     restaurant_id = request.view_args['id']
     query = 'UPDATE restaurant WHERE Id = ?'
     result = run_query(query, (restaurant_id))
     
     return jsonify('restaurant updated', 200)
+ """
