@@ -36,8 +36,8 @@ def create_restaurant():
 
     name = request_payload.get('name')
     address = request_payload.get('address')
-    banner_url = request_payload.get('bannerUrl') or 'https://images.pexels.com/photos/2664216/pexels-photo-2664216.jpeg'
-    profile_url = request_payload.get('profileUrl') or 'https://images.pexels.com/photos/2664216/pexels-photo-2664216.jpeg'
+    banner_url = request_payload.get('bannerUrl') or 'https://images.pexels.com/photos/566566/pexels-photo-566566.jpeg'
+    profile_url = request_payload.get('profileUrl') or 'https://images.pexels.com/photos/3522790/pexels-photo-3522790.jpeg'
     bio = request_payload.get('bio')
     city = request_payload.get('city')
     email = request_payload.get('email')
