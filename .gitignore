@@ -1,0 +1,5 @@
+venv/
+.vscode/
+db_creds.py
+__pycache__
+\endpoints\__pycache__
