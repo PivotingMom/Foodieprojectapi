@@ -38,7 +38,7 @@ def client_login():
 
 
 def get_client_Id(token):
-    max_token_age = datetime.datetime.utcnow() - datetime.timedelta(minutes=60000)
+    max_token_age = datetime.datetime.utcnow() - datetime.timedelta(minutes=720)
     print(max_token_age)
     
     query = 'SELECT client_Id from client_session WHERE token = ? AND created_at > ?' 
@@ -89,7 +89,7 @@ def restaurant_login():
 
 
 def get_restaurant_Id(token):
-    max_token_age = datetime.datetime.utcnow() - datetime.timedelta(minutes=120)
+    max_token_age = datetime.datetime.utcnow() - datetime.timedelta(minutes=720)
     print(max_token_age)
     
     query = 'SELECT restaurant_Id from restaurant_session WHERE token = ? AND created_at > ?' 
