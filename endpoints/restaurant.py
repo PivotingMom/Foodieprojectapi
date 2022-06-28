@@ -56,7 +56,7 @@ def create_restaurant():
     return jsonify('restaurant created', 200)
 
 def get_restaurant_Id(token):
-    max_token_age = datetime.datetime.utcnow() - datetime.timedelta(minutes=120)
+    max_token_age = datetime.datetime.utcnow() - datetime.timedelta(minutes=10000)
     print(max_token_age)
     
     query = 'SELECT restaurant_Id from restaurant_session WHERE token = ? AND created_at > ?' 

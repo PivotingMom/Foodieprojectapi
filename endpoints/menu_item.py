@@ -21,31 +21,8 @@ def get_menu_item():
 
     return jsonify(result)
 
-@app.post('/api/menu_item')
-def create_menu_item():
-    request_payload = request.get_json()
-    query = 'INSERT INTO menu_item (name, description, price, image_url) VALUES (?,?,?,?)'
-
-    name = request_payload.get('name')
-    description = request_payload.get('description')
-    price = request_payload.get('price')
-    image_url = request_payload.get('picture_Url') or 'https://images.pexels.com/photos/2664216/pexels-photo-2664216.jpeg'
-    
-    result = run_query(query, (name, description, price, image_url))
-
-    return jsonify('menu item added', 200)
-
-@app.delete('/api/menu_item')
-def delete_menu_item():
-    menu_id = request.view_args['id']
-    query = 'DELETE FROM menu_item WHERE Id = ?'
-    result = run_query(query, (menu_id))
-    
-    return jsonify('menu item deleted', 200)
-
-
 def get_restaurant_Id(token):
-    max_token_age = datetime.datetime.utcnow() - datetime.timedelta(minutes=120)
+    max_token_age = datetime.datetime.utcnow() - datetime.timedelta(minutes=10000)
     print(max_token_age)
     
     query = 'SELECT restaurant_Id from restaurant_session WHERE token = ? AND created_at > ?' 
@@ -55,9 +32,30 @@ def get_restaurant_Id(token):
     else: 
         return None
 
+@app.post('/api/menu')
+def create_menu_item():
+    request_payload = request.get_json()
+    token = request.headers.get('token')
+    
+    restaurant_Id = get_restaurant_Id(token)
+    
+    if restaurant_Id:
+        
+        query = 'INSERT INTO menu_item (name, description, price, image_url, restaurant_Id) VALUES (?,?,?,?,?)'
 
-@app.patch('/api/menu_item')
-def update_menu_item():
+        name = request_payload.get('name')
+        description = request_payload.get('description')
+        price = request_payload.get('price')
+        image_url = request_payload.get('picture_Url') or 'https://images.pexels.com/photos/2664216/pexels-photo-2664216.jpeg'
+    
+        result = run_query(query, (name, description, price, image_url, restaurant_Id))
+
+        return jsonify('menu item added', 200)
+
+
+
+@app.patch('/api/menu')
+def update_menu():
     data=request.get_json()
     token = request.headers.get('token')
     
@@ -65,29 +63,65 @@ def update_menu_item():
     
     if restaurant_Id:
         
-        query = 'SELECT restaurant_Id from menu_item WHERE Id =?'
+        query = 'SELECT * from menu_item WHERE restaurant_Id =? AND Id =?'
         
-        menu_item_Id = data.get('menu_item_id')
-        result = run_query(query, ( menu_item_Id,))
+        menuId = data.get('menuId')
         
-        if menu_item_Id:restaurant_Id
+        result = run_query(query, ( restaurant_Id, menuId ))
         
         print(result)
-
         
-        name = data.get('name')
-        description = data.get('description')
-        price = data.get('price')
-        image_url = data.get('picture_Url') or 'https://images.pexels.com/photos/2664216/pexels-photo-2664216.jpeg'
-        menu_item_Id = data.get('menu_item_id')
+        if result:
+        
+            
+            name = data.get('name')
+            description = data.get('description')
+            price = data.get('price')
+            image_url = data.get('picture_Url') or 'https://images.pexels.com/photos/2664216/pexels-photo-2664216.jpeg'
+            menuId = data.get('menuId')
         
         
-        query = 'UPDATE menu_item SET name=?, description=?, price=?,  image_url=?,  WHERE Id = ?'
-        result = run_query(query, (name, description, price, image_url,  menu_item_Id))
+            query = 'UPDATE menu_item SET name=?, description=?, price=?,  image_url=?  WHERE Id = ?'
+            result = run_query(query, (name, description, price, image_url,  menuId))
     
-        return jsonify('menu_item updated', 200)
+            return jsonify('menu_item updated', 200)
+        
+        
 
     else: 
         return jsonify('no menu')
+    
+@app.delete('/api/menu')
+def delete_menu_item():
+    data=request.get_json()
+    token = request.headers.get('token')
+    
+    restaurant_Id = get_restaurant_Id(token)
+    
+    if restaurant_Id:
+        
+        query = 'SELECT * from menu_item WHERE restaurant_Id =? AND Id =?'
+        
+        menuId = data.get('menuId')
+        
+        result = run_query(query, ( restaurant_Id, menuId ))
+        
+        print(result)
+        
+        if result:
+            
+            query = 'DELETE FROM menu_item WHERE Id = ?'
+            result = run_query(query, (menuId,))
+    
+            return jsonify('menu item deleted', 204)
+        
+            
+        else:
+            return jsonify('can not find the menu', 422)
+    
+    else:
+        return jsonify('invalid token', 401)
+    
+
 
 

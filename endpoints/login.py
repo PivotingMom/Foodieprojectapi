@@ -108,8 +108,7 @@ def restaurant_login_delete():
         query = 'DELETE from restaurant_session WHERE restaurant_Id = ?'
         run_query(query, (restaurant_Id,))
         
-        #query = 'DELETE from client_session WHERE token =?'
-        #run_query(query, (token,)))
+        
         
         return jsonify('token deleted', 204) 
     else: 
