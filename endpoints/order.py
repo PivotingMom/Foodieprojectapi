@@ -16,10 +16,49 @@ from endpoints.menu_item import get_restaurant_Id
 
 @app.get('/api/order')
 def get_order():
-    query = 'SELECT * FROM orders'
-    result = run_query(query)
+    token = request.headers.get('token')
+    
+    client_Id = get_client_Id(token)
+    
+    
+    if client_Id:
+        
+        query= 'SELECT * FROM orders INNER JOIN order_menu_item ON orders.id = order_menu_item.order_id where orders.client_Id=?'
 
-    return jsonify(result)
+        
+        results = run_query(query, (client_Id,))
+        
+        print(results)
+        if results:
+            items = []
+            output=[]
+            orderId=results[0][0]
+        
+            for result in results:
+            
+            
+                if orderId != result[0]:
+                    output.append({
+                    'client_Id': result[0],
+                    'createdAt': result[1],
+                    'is_cancelled': result[5],
+                    'is_completed': result[3],
+                    'is_comfirmed': result[2],
+                    'items': items,
+                    'order_id':result[0],
+                    'restaurant_id': result[6]
+                    })
+                    items = []
+                items.append(result[8])
+    
+    restaurant_Id = get_restaurant_Id(token)
+    if restaurant_Id:
+        
+
+            return jsonify('order completed', 200)
+    
+    else:
+        return jsonify('invalid token', 401)
 
 
     
