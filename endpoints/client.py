@@ -38,7 +38,7 @@ def create_client():
     return jsonify('client created', 200)
 
 def get_client_Id(token):
-    max_token_age = datetime.datetime.utcnow() - datetime.timedelta(minutes=30)
+    max_token_age = datetime.datetime.utcnow() - datetime.timedelta(minutes=60)
     print(max_token_age)
     
     query = 'SELECT client_Id from client_session WHERE token = ? AND created_at > ?' 

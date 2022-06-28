@@ -63,6 +63,6 @@ def run_query(statement, args=None):
 
     except Exception as e:
         print(e.with_traceback)
-
+    
     finally:
         disconnect_db(conn, cursor)
