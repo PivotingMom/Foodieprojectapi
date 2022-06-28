@@ -40,6 +40,9 @@ def run_query(statement, args=None):
                 print("Query successful")
             else:
                 print("Query Failed")
+            if statement.startswith("INSERT"):
+                return cursor.lastrowid
+            #helps to return the id of what i inserted into my DB
 
     except mariadb.OperationalError as e:
         print("got an operational error")
@@ -56,13 +59,13 @@ def run_query(statement, args=None):
             print("user already exist")
         else:
             print(e.msg)
-
+    
     except RuntimeError as e:
         print("caught a runtime error")
         e.with_traceback
 
     except Exception as e:
         print(e.with_traceback)
-    
+            
     finally:
         disconnect_db(conn, cursor)
