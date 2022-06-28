@@ -1,3 +1,4 @@
+from pickle import NEXT_BUFFER
 from app import app
 from flask import Flask, jsonify, request
 import json
@@ -27,38 +28,46 @@ def get_order():
 
         
         results = run_query(query, (client_Id,))
-        
-        print(results)
-        if results:
-            items = []
-            output=[]
-            orderId=results[0][0]
-        
-            for result in results:
-            
-            
-                if orderId != result[0]:
-                    output.append({
-                    'client_Id': result[0],
-                    'createdAt': result[1],
-                    'is_cancelled': result[5],
-                    'is_completed': result[3],
-                    'is_comfirmed': result[2],
-                    'items': items,
-                    'order_id':result[0],
-                    'restaurant_id': result[6]
-                    })
-                    items = []
-                items.append(result[8])
     
     restaurant_Id = get_restaurant_Id(token)
     if restaurant_Id:
+        query= 'SELECT * FROM orders INNER JOIN order_menu_item ON orders.id = order_menu_item.order_id where orders.restaurant_Id=?'
+        results = run_query(query, (restaurant_Id,))
         
-
-            return jsonify('order completed', 200)
-    
-    else:
+        print(results)
+    if not client_Id and not restaurant_Id:
         return jsonify('invalid token', 401)
+    if results:
+        items = []
+        output=[]
+        orderId=results[0][0]
+    
+        for i, result in enumerate(results):
+        
+            items.append(result[8])
+            print(i)
+            print(len(results))
+            try:
+                nextorderId=results[i + 1][0]
+            except:
+                nextorderId=None
+            if i + 1 ==len(results) or orderId != nextorderId:
+            
+                output.append({
+                'client_Id': result[5],
+                'createdAt': result[1],
+                'is_cancelled': result[4],
+                'is_completed': result[3],
+                'is_comfirmed': result[2],
+                'items': items,
+                'order_id':result[0],
+                'restaurant_id': result[6]
+                })
+                items = []
+                orderId = nextorderId
+        return jsonify(output)
+    else:
+        return jsonify([], 200)
 
 
     
