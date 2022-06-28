@@ -14,12 +14,39 @@ from endpoints.login import client_login, restaurant_login
 
 
 
-@app.get('/api/menu_item')
+@app.get('/api/menu')
 def get_menu_item():
-    query = 'SELECT * FROM menu_item'
-    result = run_query(query)
+    restaurantId = request.args.get('restaurantId')
+    menuId = request.args.get('menuId')
+    
+    if restaurantId:
+        query = 'SELECT * FROM menu_item WHERE restaurant_Id =?'
+        
+        
+        result = run_query(query, (restaurantId,))
+    elif menuId:
+        query = 'SELECT * FROM menu_item WHERE Id =?'
+        
+        
+        result = run_query(query, (menuId,))
+    else:
+        
+        query = 'SELECT * FROM menu_item'
+        
+        result = run_query(query)
 
-    return jsonify(result)
+        print(result)
+        
+    formated_result = list(map(lambda x: 
+        {'name': x[1],
+        'description': x[2],
+        'price':x[3],
+        'image_url': x[4],
+        'restaurant_Id': x[5]
+
+    }, result))
+    return jsonify(formated_result)
+
 
 def get_restaurant_Id(token):
     max_token_age = datetime.datetime.utcnow() - datetime.timedelta(minutes=10000)
