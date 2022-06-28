@@ -14,11 +14,25 @@ from endpoints.login import client_login
 
 
 @app.get('/api/client')
-def get_clients():
-    query = 'SELECT * FROM client'
-    result = run_query(query)
+def get_client():
+    token = request.headers.get('token')
+    
+    client_Id = get_client_Id(token)
+    if client_Id:
+    
+        query = 'SELECT * FROM client where Id=?'
+        
+        result = run_query(query, (client_Id,))
 
-    return jsonify(result)
+        return jsonify({
+            'client_Id': result[0][0],
+            'createdAt': result[0][6],
+            'email': result[0][1],
+            'username': result[0][2],
+            'password': result[0][3],
+            'name': result[0][4],
+            'picture_url': result[0][7]
+        })
 
 @app.post('/api/client')
 def create_client():

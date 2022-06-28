@@ -85,7 +85,8 @@ def update_menu():
             result = run_query(query, (name, description, price, image_url,  menuId))
     
             return jsonify('menu_item updated', 200)
-        
+        else:
+            return jsonify('invalid token', 401)
         
 
     else: 

@@ -12,22 +12,39 @@ import uuid
 
 @app.get('/api/restaurant')
 def get_restaurants():
-    query = 'SELECT *, restaurant.name AS restaurant_name, city.name AS city_name FROM restaurant INNER JOIN city ON restaurant.city = city.id'
-    result = run_query(query)
+    restaurantId = request.args.get('restaurantId')
+    
+    if restaurantId:
+        query = 'SELECT * FROM restaurant WHERE restaurant.id =?'
+        
+        #'SELECT *, restaurant.name AS restaurant_name, city.name AS city_name FROM restaurant INNER JOIN city ON restaurant.city = city.id WHERE restaurant.id =?'
+        
+        
+        result = run_query(query, (restaurantId, ))
+        
+    else:
+        
+        query = 'SELECT * FROM restaurant'
+        
+        result = run_query(query)
 
+        print(result)
+        
     formated_result = list(map(lambda x: {
-        'address': x['address'],
-        'bannerUrl': x['banner_url'],
-        'bio': x['bio'],
-        'city': x['city_name'],
-        'email': x['email'],
-        'name': x['restaurant_name'],
-        'phoneNum': x['phone_number'],
-        'profileUrl': x['profile_url'],
-        'restaurantId': x['id']
+        'address': x[3],
+        'bannerUrl': x[7],
+        'bio': x[5],
+        'city': x[8],
+        'email': x[1],
+        'name': x[2],
+        'phoneNum': x[4],
+        'profileUrl': x[6],
+        'restaurantId': x[0]
 
     }, result))
     return jsonify(formated_result)
+
+
 
 
 @app.post('/api/restaurant')
